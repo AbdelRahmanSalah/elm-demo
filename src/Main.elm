@@ -15,9 +15,9 @@ main =
       { init = init
       , view = view
       , update = update
-      , subscriptions = (\x -> Sub.none) 
+      , subscriptions = (\x -> Sub.none)
       }
-  
+
 -- MODEL
 
 
@@ -70,24 +70,24 @@ update msg model =
 
     Click selected ->
       ({ model | selected = Just selected }, Cmd.none)
-    
+
     OnFetchUsers users ->
       ({model | results = users}, Cmd.none)
 
 -- VIEW
 
-innerDivStyle = 
+innerDivStyle =
   [ style "border" "1px solid rgba(0, 0, 0, 0.8)"
   , style "display" "inline-grid"
   , style "padding" "5px"
   , style "margin" "5px"
   ]
 
-view : Model -> Html Msg 
+view : Model -> Html Msg
 view model =
   div [style "display" "grid", style "grid-template-columns" "auto auto auto"]
     [ searchInputWithResults model
-    , div innerDivStyle (showSelected model.selected) 
+    , div innerDivStyle (showSelected model.selected)
     ]
 
 searchInputWithResults : Model -> Html Msg
@@ -95,11 +95,11 @@ searchInputWithResults model =
   div innerDivStyle [
     input [ type_ "text", placeholder "", value model.query, onInput Search ] []
     , ul [] (
-      if model.query == ""  
-      then displayWebData model.results 
+      if model.query == ""
+      then displayWebData model.results
       else
         model.results
-        |> RemoteData.map (List.filter (\r -> (String.contains r.login  model.query) ))
+        |> RemoteData.map (List.filter (\r -> (String.contains model.query r.login) ))
         |> displayWebData)
   ]
 
@@ -119,9 +119,9 @@ displayWebData rUsers =
       [ li [] [ text "error" ] ]
 
 showSelected : Maybe User -> List (Html a)
-showSelected r =  
-  case r of 
-    Just selected -> 
+showSelected r =
+  case r of
+    Just selected ->
       [ li [] [text <| "login :" ++ selected.login ]
       , li [] [text <| "node_id :" ++ selected.node_id ]
       , li [] [text <| "avatar_url :" ++ selected.avatar_url ]
@@ -139,11 +139,11 @@ showSelected r =
       , li [] [text <| "received_events_url :" ++ selected.received_events_url ]
       , li [] [text <| "userType :" ++ selected.userType ]
       ]
-    Nothing -> 
+    Nothing ->
       []
 
 usersList : List User -> List (Html Msg)
-usersList results = 
+usersList results =
   List.map (\r -> li [ onClick <| Click <| r ] [ text r.login ]) results
 
 
